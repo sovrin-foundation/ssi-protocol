@@ -1,0 +1,5 @@
+# Core Principles
+
+## Doacracy
+
+The first and most important principle is that the design of this protocol will be dependent on a doacracry. The people who are actually contributing to the design of the protocol are the people who get to decide how a particular part of the protocol should be implemented. This is an important foundation to building this protocol because too often, people get caught up in technical discussions that go around in circles and then little work is actually completed. As such, we've decide that the people who are actually making pull requests are the people who will get a say in how things get built. It should be noted that this doesn't mean that we shouldn't have technical discussions. Rather, it implies that if you are going to have discussions to reach consensus on how the protocol should work, then there should be a follow up pull request submitting the ideas discussed into this repository.
