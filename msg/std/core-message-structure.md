@@ -45,9 +45,3 @@ Up to this point, no drawbacks for this core message structure have been identif
 
 At this point, just having a message structure outlined will continue to facilitate development of agents. By introducing this structure, necessary modifications will hopefully come to light as agent development continues.
 
-# Prior art
-[prior-art]: #prior-art
-
-I'm sure that Evernym and BC Gov. have been following a convention similar to that which is proposed here; comments from
-those who have already implemented differing message structures are especially encouraged to comment on differences and
-their advantages or disadvantages.
