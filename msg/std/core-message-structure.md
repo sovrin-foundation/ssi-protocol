@@ -1,4 +1,5 @@
 - Name: core-message-structure
+- Author: Daniel Bluhm (copied from Hyperledger/indy-HIPE)
 - Start Date: July 5th, 2018
 
 # Summary
