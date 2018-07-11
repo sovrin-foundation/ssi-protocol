@@ -43,7 +43,7 @@ For a SealedBox (AnonCrypt) message the alg, would be _ECDH-ES_ which tells the 
 
 *jwk*
 
-This field is used to specify which public key was used by the sender to encrypt the message. It _MUST_ be used when the DID_Doc of the receiver contains multiple messages to identify which public key was used by the sender to encrypt the message. The format of this _SHOULD_ be the public key base58 encoded.
+This field is used to specify which public key was used by the sender to encrypt the message. It _MUST_ be used when the DID_Doc of the receiver contains multiple messages to identify which public key was used by the sender to encrypt the message. It also _MUST_ be used when an ephemeral key is used to send the message, such as in SealedBox (AnonCrypt). The format of this _SHOULD_ be the public key base58 encoded.
 
 *enc*
 
@@ -91,7 +91,7 @@ using JWE compact serialization:
     "header" : { "alg" : "ECDH-ES", 
                  "enc" : <AEAD algorithm name>, 
                  "kid" : <reference to specific key in the Sender's DID Doc>,
-                 "jwk" : <Sender's verkey Base58 encoded>
+                 "jwk" : <Sender's Ephemeral verkey Base58 encoded>
                 },
 	"iv" : <Nonce used in authCrypt>,
     "ciphertext" : <message ciphertext>,
