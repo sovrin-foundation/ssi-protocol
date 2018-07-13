@@ -33,17 +33,14 @@ This is the ciphertext of the message.
 *tag*
 This is the Authentication tag. It _SHOULD_ be a HMAC and likely will be Poly1305 to adhere to using the NaCl library.
 
+*recipient*
+A list of corresponding people that can decrypt the message and the key's they should be using in order to perform decryption of the message. This is _SHOULD_ be used to support efficient encryption of a message to multiple parties.
+
 
 ## Header JSON Fields
 *alg*
 
-For a SecretBox (AuthCrypt) message the alg, would be _DID_ which tells a person to reference the DID-Doc which _MUST_ be resolved (e.g. from the ledger, universal resolver, or local storage) to get the public key of the sender of the message.
-
-For a SealedBox (AnonCrypt) message the alg, would be _ECDH-ES_ which tells the person to reference the *eku* field.
-
-*jwk*
-
-This field is used to specify which public key was used by the sender to encrypt the message. It _MUST_ be used when the DID_Doc of the receiver contains multiple messages to identify which public key was used by the sender to encrypt the message. It also _MUST_ be used when an ephemeral key is used to send the message, such as in SealedBox (AnonCrypt). The format of this _SHOULD_ be the public key base58 encoded.
+This _SHOULD_ include the value *nacl_box* indicating that the nacl's implementation of crypto_box was used to encrypt the symmetrical key contained in the encrypted_key field.
 
 *enc*
 
@@ -55,22 +52,33 @@ Current proposed encryption schemes are:
     3. Salsa20Poly1305
     4. XSalsa20Poly1305
 
-*encrypted_key* This has become an optional field to be used when sealed_box (AnonCrypt) messages have been sent. It will include the public key of the
+*kid*
+
+This is a reference to the specific public key that was taken from the did-doc by the sender to encrypt the symmetrical key used to encrypt the ciphertext.
+
+*jwk*
+
+This field is used to specify which public key was used by the sender to encrypt the message. It _MUST_ be used when the DID_Doc of the receiver contains multiple messages to identify which public key was used by the sender to encrypt the message. It also _MUST_ be used when an ephemeral key is used to send the message, such as in SealedBox (AnonCrypt). The format of this _SHOULD_ be the public key base58 encoded.
+
+*encrypted_key*
+
+This is the key which has been encrypted using NaCl's crypto_box to encrypt the symmetrical key used to encrypt the ciphertext.
 
 # Encoding format
 
-Once the JWM has been properly filled out, the JSON message should be base64url encoded with each section being separated by a period. For example, 
+Once the JWM has been properly filled out, the JSON message should be base64url encoded with each section being separated by a period. Examples of the encoding are provided below.
 
 # Example:
 [example]: #example
 
-### SecretBox (AuthCrypt) Example 
-using compact serialization:
+### Compact Serialization Example 
 ```json
 {
-    "header" : { "alg" : "DID", 
+    "header" : { "alg" : "NaCl_box", 
                  "enc" : <AEAD algorithm name>,
-                 "kid" : <reference to specific key in the Sender's DID Doc>
+                 "kid" : <reference to the receiver public key as a DID>,
+                 "jwk" : <reference to the sender's public key>,
+                 "encrypted_key" : <output of a cryptobox function which is the secret key used to encrypt ciphertext>
                 },
 	"iv" : <Nonce>,
     "ciphertext" : <message ciphertext>,
@@ -84,16 +92,24 @@ Base64URLEncode(iv).
 Base64URLEncode(ciphertext).
 Base64URLEncode(tag)
 
-### SealedBox (AnonCrypt) Example 
-using JWE compact serialization:
+### JSON Serialization Example
 ```json
 {
-    "header" : { "alg" : "ECDH-ES", 
-                 "enc" : <AEAD algorithm name>, 
-                 "kid" : <reference to specific key in the Sender's DID Doc>,
-                 "jwk" : <Sender's Ephemeral verkey Base58 encoded>
+    "recipient" : [
+        "header" : { "alg" : "NaCl_box", 
+                 "enc" : <AEAD algorithm name>,
+                 "kid" : <reference to the receiver public key as a DID>,
+                 "jwk" : <reference to the sender's public key>,
+                 "encrypted_key" : <output of a cryptobox function which is the secret key used to encrypt ciphertext>
                 },
-	"iv" : <Nonce used in authCrypt>,
+        "header" : { "alg" : "NaCl_box", 
+                 "enc" : <AEAD algorithm name>,
+                 "kid" : <reference to the receiver public key as a DID>,
+                 "jwk" : <reference to the sender's public key>,
+                 "encrypted_key" : <output of a cryptobox function which is the secret key used to encrypt ciphertext>
+                },
+    ],
+	"iv" : <Nonce>,
     "ciphertext" : <message ciphertext>,
     "tag" : <Authentication Tag from NaCl>
 }
